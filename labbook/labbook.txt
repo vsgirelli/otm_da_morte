@@ -1,0 +1,64 @@
+1 - Basicamente é a implementação de uma meta heurística pra encontrar a solução
+ótima (ou uma solução boa o suficiente) sobre um problema np completo.
+Além disso, tem que modelar o problema matematicamente no GLPK.
+
+4 partes:
+- Formulação matemática
+- Implementação da meta heurística
+- Relatório (de cunho bem científico, I like it)
+- Apresentação
+
+2 - Formulação matemática
+Separar dados de formulação.
+Deve conter um arquivo .mod (what is that supposed to be?) e arquivos de dados
+das instâncias no padrão GLPK (não sei tbm que padrão é esse kk)
+
+3 - Implementação
+Qualquer linguagem open source sem bibliotecas proprietárias.
+Cuidar com:
+- Documentação, legibilidade.
+- Parâmetros recebidos via linha de comando (principalmente a semente para o
+  gerador de números aleatórios)
+- A eficiência da implementação e a qualidade das soluções serão consideradas na
+  avaliação.
+- Não pode parar a execução por um critério de tempo. Usar: número de iterações,
+  iterações sem encontrar solução melhor, proximidade de limitante. Evitar que
+  demore mais que 5 minutos.
+
+Entregar o código fonte.
+Entregar README informando como compilar/executar e dependências.
+
+4 - Relatório
+No máximo 6 páginas (sem capa e referências)
+- Intro: explicação sobre a meta heurística
+- Problema: problema e sua formulação matemática explicada. Ressaltar utilidade
+  de cada restrição e a função objetivo.
+- Descrição detalhada do algoritmo:
+  Representação do problema
+  Estruturas de dados
+  Geração da solução inicial
+  Vizinhanças e estratégia de seleção de vizinhos
+  Parâmetros do método
+  Critérios de parada
+- Tabela de resultados:
+  Relaxação linear do GLPK com a formulação ?????????
+  Valor da melhor sol inteira encontrada pelo GLPK com a nossa formulação
+  Runtime
+  Valor médio da solução inicial do algoritmo
+  Valor médio da melhor solução encontrada
+  Desvio padrão das melhores soluções
+  Runtime médio
+  Desvio percentual médio das soluções obtidas pelo nosso alg com relação à
+melhor solução conhecida
+- Análise dos resultados
+- Conclusões
+- Refs
+
+Usar média de 10 execuções pra cada instância (o que são instâncias???).
+Execuções feitas com uma seed aleatória diferente (ver mais)
+
+DICAS:
+- Analisar bem a complexidade do algoritmo considerando as EDs
+- Como perder pontos, do Ritt (VER)
+- Cheat sheet do Ritt sobre o GLPK
+
