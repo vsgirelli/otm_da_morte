@@ -62,3 +62,32 @@ DICAS:
 - Como perder pontos, do Ritt (VER)
 - Cheat sheet do Ritt sobre o GLPK
 
+Sobre Simulated Annealing:
+É a mesma coisa que o hill climbing, mas com a questão de permitir escolhas
+menos boas pra garantir que não se está preso em um ótimo local:
+
+estado_atual = estado_random(); // sol inicial aleatória
+
+para t : 1 ... condição de parada {
+  temp--; // ou decresce de alguma outra forma, não necessariamente -1
+
+  se temp == 0
+    retorna estado_atual // pq ele é a última melhor escolha encontrada
+
+  para i : 1 ... N { // TODO verificar o que pode ser esse N
+    (1) estado_candidato = vizinho_random(estado_atual);
+
+    diff_estado = valor(estado_candidato) - valor(estado_atual)
+
+    se diff_estado > 0 // significa que o vizinho encontrado é a nova melhor solução
+      estado_atual = estado_candidato // novo melhor estado
+    senão
+      estado_atual = estado_candidato com prob E relacionada à temp ****
+  }
+}
+
+**** Isso é justamente a probabilidade/chance que se dá para escolhas ruins. Não
+foi possível encontrar uma solução melhor em (1), mas se a temperatura temp for
+alta o suficiente, pode-se permitir uma escolha menos boa a partir da solução
+atual ótima.
+
