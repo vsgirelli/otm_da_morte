@@ -91,3 +91,50 @@ foi possível encontrar uma solução melhor em (1), mas se a temperatura temp f
 alta o suficiente, pode-se permitir uma escolha menos boa a partir da solução
 atual ótima.
 
+Então, trazendo pro escopo do trabalho:
+
+FLOWSHOP: Permutational Flowshop Scheduling Problem
+
+- n tarefas a serem processadas
+a serem alocadas em
+- m máquinas disponíveis
+- tempos de processamento Tir > 0
+      1 <= i <= n
+      1 <= r <= m
+
+Restrições:
+- tarefas devem ser processadas em sequência (há ordem de execução)
+- cada tarefa deve ser processada em todas as máquinas
+- processamento sem preempção
+
+Objetivo:
+Minimizar o makespan ?
+Solução:
+Ordem de alocação das tarefas às máquinas
+
+Ou seja, traduzindo o que diz na wikipedia:
+There are m machines and n jobs. Each job contains exactly m operations. The i-th
+operation of the job must be executed on the i-th machine. No machine can perform
+more than one operation simultaneously. For each operation of each job, execution
+time is specified.
+Operations within one job must be performed in the specified order. The first
+operation gets executed on the first machine, then (as the first operation is
+finished) the second operation on the second machine, and so on until the m-th
+operation. Jobs can be executed in any order, however. Problem definition implies
+that this job order is exactly the same for each machine. The problem is to
+determine the optimal such arrangement, i.e. the one with the shortest possible
+total job execution makespan.
+
+Cada job ta dividido em m pedaços pra que cada pedaço seja executado em uma das
+m máquinas. Esses pedaços devem ser executados sequencialmente, respeitando a
+ordem em que eles aparecem no job. O pedaço m deve ser executado na máquina m
+antes de o pedaço m+1 ser executado na máquina m+1.
+O objetivo é que o tempo total de execução do m-gésimo pedaço do n-gésimo job
+seja executado no menor tempo possível na máquina m. Ou seja, reduzir o tempo de
+execução de todos os pedaços de todas as aplicações em suas devidas máquinas.
+
+
+Okay, useful links:
+https://en.wikipedia.org/wiki/Flow_shop_scheduling
+http://www.diegm.uniud.it/schaerf/SAS/Projects/FlowShop.pdf
+TODO entender cada detalhe desse último pdf
