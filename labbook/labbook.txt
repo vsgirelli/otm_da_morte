@@ -9,11 +9,10 @@ Além disso, tem que modelar o problema matematicamente no GLPK.
 - Apresentação
 
 2 - Formulação matemática
-Separar dados de formulação.
-Deve conter um arquivo .mod (what is that supposed to be?) e arquivos de dados
-das instâncias no padrão GLPK (não sei tbm que padrão é esse kk)
+Separar dados (instância) da formulação.
+Deve conter um arquivo .mod e arquivos de dados das instâncias no padrão GLPK
 
-3 - Implementação
+- Implementação
 Qualquer linguagem open source sem bibliotecas proprietárias.
 Cuidar com:
 - Documentação, legibilidade.
@@ -138,3 +137,24 @@ Okay, useful links:
 https://en.wikipedia.org/wiki/Flow_shop_scheduling
 http://www.diegm.uniud.it/schaerf/SAS/Projects/FlowShop.pdf
 TODO entender cada detalhe desse último pdf
+
+
+03/06/19
+
+Então, vendo os dados que tão no github, parece que não tem nada disso de
+operações dentro das tasks, é só as tasks mesmo, nem tempo de chegada das tasks
+não tem.
+
+Então a gente tem que decidir qual vai ser a nossa métrica pra decidir qual task
+escalonar primeiro. Por ex, a gente pode escolher a média do tempo de execução
+da tarefa nas máquinas como métrica. Primeiro escolher a tarefa que tem a menor
+média de execução entre as máquinas e escalonar ela, depois escolher a segunda
+melhor, e assim vai. Daí praquele lance de escolher vizinhos piores numa dada
+frequência x, a gente pode dizer que ao invés de escolher o próximo melhor tempo
+médio entre as tarefas, podemos pegar a quinta tarefa com melhor tempo médio,
+etc.
+
+Also, foi debatido que sepa o melhor tempo médio não seja uma boa, então isso
+pode ir pro relatório.
+
+TODO ler sobre programação dinâmica.
