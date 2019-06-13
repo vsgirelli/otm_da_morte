@@ -34,15 +34,16 @@ set T within (N cross M);
 param time{T};
 
 # Parametro big M
-param P;
+param P := 1e6;
 
 var c{(i,j) in T} >= 0;
+var Cmax >= 0;
 var d{(i,j) in T} binary;
 
-maximize makespan: sum{i in N, r in M} c[i,r] ;
+minimize obj_makespan: Cmax;
 
 # Assegura que o tempo de completude de uma tarefa na máquina 1 será pelo menos igual ao seu tempo req para execução
-s.t. COMP_M1 {i in N}:  c[i,1] >= time[i,1];
+s.t. COMP_M1 {i in N}:  c[i,1] >= time[i,1]; # Cuidado: primeiro índice é da tarefa, segundo é da máquina
 
 # Assegura que uma tarefa nao vá rodar na proxima máquina antes de estar completa na máq anterior
 s.t. COMP_M {i in N, r in M: r >= 2}: c[i,r] - c[i, r - 1] >= time[i,r];
@@ -54,6 +55,6 @@ s.t. JOB_O2 { i in N, k in N, r in M: k > i}: c[i,r] - c[k,r] + P * d[i,k] <= P 
 
 # O tempo de completude da tarefa vai ser igual ao makespan
 # Aqui deveria ter um max(c)
-s.t. MKSPAN { i in N, r in M}: max{i in N,r in M}  >= c[i,r];
+s.t. MKSPAN { i in N, r in M}: Cmax >= c[i,r];
 
 end;
