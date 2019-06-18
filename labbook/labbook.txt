@@ -53,7 +53,7 @@ melhor solução conhecida
 - Conclusões
 - Refs
 
-Usar média de 10 execuções pra cada instância (o que são instâncias???).
+Usar média de 10 execuções pra cada instância.
 Execuções feitas com uma seed aleatória diferente (ver mais)
 
 DICAS:
@@ -64,6 +64,9 @@ DICAS:
 Sobre Simulated Annealing:
 É a mesma coisa que o hill climbing, mas com a questão de permitir escolhas
 menos boas pra garantir que não se está preso em um ótimo local:
+Eles chamam isso de slow cooling, que é a diminuição da probabilidade de aceitar
+soluções piores conforme o espço de soluções é explorado. A dúvida ainda é como
+é calculada essa probabilidade.
 
 estado_atual = estado_random(); // sol inicial aleatória
 
@@ -77,8 +80,9 @@ para t : 1 ... condição de parada {
     (1) estado_candidato = vizinho_random(estado_atual);
 
     diff_estado = valor(estado_candidato) - valor(estado_atual)
+    // valor é dado pelo makespan que essa solução tem
 
-    se diff_estado > 0 // significa que o vizinho encontrado é a nova melhor solução
+    se diff_estado < 0 // significa que o vizinho encontrado tem menor makespan
       estado_atual = estado_candidato // novo melhor estado
     senão
       estado_atual = estado_candidato com prob E relacionada à temp ****
@@ -107,7 +111,7 @@ Restrições:
 - processamento sem preempção
 
 Objetivo:
-Minimizar o makespan ?
+Minimizar o makespan, que é o tempo total de execução.
 Solução:
 Ordem de alocação das tarefas às máquinas
 
@@ -158,3 +162,106 @@ Also, foi debatido que sepa o melhor tempo médio não seja uma boa, então isso
 pode ir pro relatório.
 
 TODO ler sobre programação dinâmica.
+
+
+09/06/19
+
+Restrições:
+Cri : tempo de completude da tarefa i na máquina r.
+
+C1i >= T1i : na primeira máquina, o tempo de completude da tarefa i vai ser no
+mínimo maior que o tempo que a tarefa i levaria pra executar.
+
+Cri - Cr-1,i >= Tri o tempo de completude da tarefa i na máquina r menos o tempo
+de completude da tarefa r na máquina anterior tem que ser no mínimo maior que o
+tempo de executar i.
+
+Cri - Crk + PDik >= Tri :
+Dik: se a tarefa i é executada antes da k
+
+15/06/19
+
+Lendo sobre Simulated Annealing:
+Slow cooling, que é a diminuição da probabilidade de aceitar
+soluções piores conforme o espço de soluções é explorado. A dúvida ainda é como
+é calculada essa probabilidade.
+Tem essa probabilidade de Boltzman-Gibbs: after the generation of a random
+initial solution, the move from the current solution S to a neighborhood
+solution S* depends on the probability P of the Boltzman-Gibbs distribution of
+the objective function difference. Besides, this transition is accepted if the
+following condition is satisfied:
+
+P = mim { 1, e^( (-deltaF) / T ) } >= omega
+
+-deltaF = F(S) - F(S*) is the difference between the objective function of the
+two states.
+omega is a randomly number generated in the interval [0, 1]
+T current control parameter in the process
+
+okay but where do those values come from? How do we choose omega and how do we
+set this temperature?
+
+Apparently, the parameter T have to decrease logarithmically with the time.
+The proposed algorithm:
+By https://bit.ly/2Fcgdh0
+
+Uma coisa que me chamou atenção no algoritmo proposto é que eles usam como
+função F o makespan que cada solução tem. Por ex, criei a sol inicial S, que
+consiste em uma ordem de execução das tarefas. O valor dessa solução é o cálculo
+do makespan dada essa ordem de execução. Quando eu gerar uma sol vizinha, eu
+avalio o makespan dela e vejo se é melhor.
+
+Pra geração não aleatória de um vizinho:
+Tenho as tarefas A, B, C, D e E. Na geração aleatória elas foram escalonadas de
+modo: B, D, C, A, E. Uma forma de gerar uma solução vizinha a isso seria por ex
+calcular a média de tempos de execução das tarefas. 
+Digamos que as médias sejam as seguintes:
+A = 10 
+B = 12
+C = 11
+D = 19
+E = 13
+No caso acima, eu poderia colocar no lugar do B a tarefa que tivesse a menor
+média de execução.
+
+Dado isso, eu teria um algoritmo que gera uma sol inicial aleatória, os vizinhos
+são gerados por meio dessa heurística de menor tempo médio de execução, e a
+compração entre uma solução e outra é justamente o quão bom se tornou o
+makespan delas.
+
+No algoritmo deles, eles têm um número máximo de iterações como condição de
+parada. O que é e como definir esse número máximo de iterações?
+
+IDEIA:
+
+initialize max_iter, omega, T
+generate the initial population P(n) consisting of a random sequence of jobs
+calculates the current population's makespan (that's the oldbest solution)
+while the max_iter has not been attained
+  generate new solution based on some heuristic
+  if new_sol <= oldbest (makespan is smaller)
+    oldbest = new_sol
+  else
+    calculate x = exp[ - (new_sol - oldbest) / T] // what's this?
+    if x > omega:
+      oldbest = new_sol
+      reduce temperature by setting T = alpha*T / wtf is this alpha?
+
+
+Apparently, alpha is the cooling rate parameter. So wtf is omega?
+It looks like omega is just a randomly generated number between [0, 1] ???
+
+In the paper, they present a methodology to define the best values for the
+parameters. But it seems too difficult to me, so I'll just use the brute force
+method kk
+At least I can use their results:
+max_iter = 600 (but i guess this one is only related to their approach using GA)
+cool rate: 0.5
+temperature: 700
+
+No artigo https://www.academia.edu/25955854/Simulated_annealing_for_permutation_flow-shop_scheduling 
+ele propõe várias heurísticas. EScolher e citar elas.
+Tem uma anotada no caderno.
+Uma ideia seria: gera com base na média, mas lá pelas tantas só pegar e trocar
+duas tarefas h e i de lugar, sendo que h < i. A tarefa h teve menor makespan que
+a tarefa i, mas dá pra pegar e só trocar elas duas pra ver no que resulta.
