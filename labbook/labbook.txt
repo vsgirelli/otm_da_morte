@@ -275,3 +275,14 @@ Depois disso posso implementar a geração aleatória de vizinhos, e depois diss
 geração com base no tempo médio de execução, a nossa função F inicial.
 
 Qual a melhor ED em python pra fazer um store da entrada?
+Pedro:
+dicio do tipo:
+{ "task1" : [7, 8, 34, 11, 20 ...]  }
+
+
+Algoritmos aqui:
+https://www.localsolver.com/docs/last/exampletour/flowshop.html
+https://github.com/rtshadow/flowshop
+https://github.com/suyunu/Flow-Shop-Scheduling
+https://github.com/topics/scheduling-problem
+https://github.com/topics/simulated-annealing?after=Y3Vyc29yOjMw&o=desc&s=stars&utf8=%E2%9C%93
