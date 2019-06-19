@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys
 import random
 
@@ -26,8 +27,6 @@ def read_input(nbtasks, nbmachines, processingTimes):
     inputFile = iter(read_values(sys.argv[1]))
     nbtasks = int(next(inputFile))
     nbmachines = int(next(inputFile))
-    problem.append(nbtasks)
-    problem.append(nbmachines)
 
     for i in range(nbtasks):
         temp = []
@@ -38,13 +37,12 @@ def read_input(nbtasks, nbmachines, processingTimes):
             time = int(next(inputFile))
             temp.append(time)
         processingTimes.append(temp)
-    problem.append(processingTimes)
 
     print(nbtasks)
     print(nbmachines)
     print(processingTimes)
 
-    return problem
+    return nbtasks, nbmachines, processingTimes
 
 # the initial random solution
 def random_neighboor(n):
@@ -53,6 +51,24 @@ def random_neighboor(n):
     sol = random.sample(range(0, n), n)
     return sol
 
+# calculates the makespan
+def makespan(sol, nbtasks, nbmachines, processingTimes):
+    # list for the time passed until the finishing of the job
+    cost = [0] * nbtasks
+    # for each machine, update the time passed
+    for m in range(0, nbmachines):
+        for t in range(0, nbtasks):
+            # time passed so far until the tast starts to run
+            costSoFar = cost[t]
+
+            # except for the first task
+            if t > 0:
+                costSoFar = max(cost[t - 1], cost[t])
+            # adds to the cost of t the time it took so far plus the time to process t in m
+            cost[t] = costSoFar + processingTimes[sol[t]][m]
+
+    # returns the last cost calculated
+    return cost[nbtasks - 1]
 
 
 # EXECUTION
@@ -60,10 +76,10 @@ if len(sys.argv) < 2:
     print("Usage: python3 pfsp.py inputFile")
     sys.exit(1)
 
-problem = read_input(nbtasks, nbmachines, processingTimes)
-nbtasks = problem[0]
-nbmachines = problem[1]
-processingTimes = problem[2]
+nbtasks, nbmachines, processingTimes = read_input(nbtasks, nbmachines, processingTimes)
 
 solution = random_neighboor(nbtasks)
 print(solution)
+
+makespan = makespan(solution, nbtasks, nbmachines, processingTimes)
+print(makespan)
