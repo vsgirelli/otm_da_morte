@@ -1,5 +1,7 @@
 import sys
 import random
+import numpy as np
+import pprint as p
 
 # number of jobs and machines
 nbtasks = 0
@@ -37,10 +39,10 @@ def readInput():
             temp.append(time)
         processingTimes.append(temp)
 
-    print(nbtasks)
-    print(nbmachines)
-    print(processingTimes)
-    print(seed)
+    #print(nbtasks)
+    #print(nbmachines)
+    #print(processingTimes)
+    #print(seed)
 
     return nbtasks, nbmachines, processingTimes, seed
 
@@ -73,16 +75,30 @@ def calcMakespan(sol, processingTimes, nbtasks, nbmachines):
             cost[task] = costSoFar + processingTimes[sol[task]][machine]
     return cost[nbtasks - 1]
 
+# Generates a better solution given a current solution.
+# The considered criteria to generate this initial better solution is
+# the mean execution time the task takes to execute in all the machines.
+def newNeighboor(sol, processingTimes):
+    neighboor = np.array(processingTimes)
+    neighboor = np.mean(neighboor, axis = 1)
+    p.pprint(neighboor)
+    minMean = np.argmin(neighboor)
+    maxMean = np.argmax(neighboor)
+    print("min {}".format(minMean))
+    print("max {}".format(maxMean))
 
 # EXECUTION
 if len(sys.argv) < 3:
-    print("Usage: python3 pfsp.py inputFile seed")
+    p.pprint("Usage: python3 pfsp.py inputFile seed")
     sys.exit(1)
 
 # reads the input and initializes the variables
 nbtasks, nbmachines, processingTimes, seed = readInput()
 
+p.pprint(processingTimes)
 solution = randomNeighboor(nbtasks, seed)
-print(solution)
+p.pprint(solution)
 makespan = calcMakespan(solution, processingTimes, nbtasks, nbmachines)
-print(makespan)
+p.pprint(makespan)
+
+newNeighboor(solution, processingTimes)
