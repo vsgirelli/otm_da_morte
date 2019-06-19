@@ -44,26 +44,33 @@ def readInput():
 
     return nbtasks, nbmachines, processingTimes, seed
 
-# the initial random solution
+# The initial random solution
 def randomNeighboor(nbtasks, seed):
-    #sol = list(range(0,nbtasks)) # list of integers from 0 to nbtasks-1
-    #random.shuffle(sol)
     random.seed(seed)
     sol = random.sample(range(0, nbtasks), nbtasks)
     return sol
 
-
-def makespan(sol, processingTimes, nbtasks, nbmachines):
+# Calculates the makespan given a solution
+# (an order in which the tasks should be executed).
+# For each task (except first), the total time passed on a given machine is:
+# The maximum time passed until it finishes processing on the previous machine
+# or the time passed for predecessor job to finish on the current machine
+# Time passed for a job to finish on a machine is:
+# the total time passed so far (the sommatory of the executions)
+# + time it takes to finish the current task on the machine
+def calcMakespan(sol, processingTimes, nbtasks, nbmachines):
     # list for the time passed until the finishing of the job
     cost = [0] * nbtasks
     # for each machine, total time passed will be updated
-    for m in range(0, nbmachines):
-        for t in range(nbtasks):
-            # time passed so far until the task starts to process
-            cost_so_far = cost[t]
-            if t > 0:
-                cost_so_far = max(cost[t - 1], cost[t])
-            cost[t] = cost_so_far + processingTimes[sol[t]][m]
+    for machine in range(0, nbmachines):
+        for task in range(0, nbtasks):
+            # cumulative time passed so far until the task starts to process
+            costSoFar = cost[task]
+            # except the first task
+            if task > 0:
+                costSoFar = max(cost[task - 1], cost[task])
+
+            cost[task] = costSoFar + processingTimes[sol[task]][machine]
     return cost[nbtasks - 1]
 
 
@@ -72,9 +79,10 @@ if len(sys.argv) < 3:
     print("Usage: python3 pfsp.py inputFile seed")
     sys.exit(1)
 
+# reads the input and initializes the variables
 nbtasks, nbmachines, processingTimes, seed = readInput()
 
 solution = randomNeighboor(nbtasks, seed)
 print(solution)
-makespan = makespan(solution, processingTimes, nbtasks, nbmachines)
+makespan = calcMakespan(solution, processingTimes, nbtasks, nbmachines)
 print(makespan)
