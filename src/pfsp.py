@@ -6,6 +6,7 @@ nbtasks = 0
 nbmachines = 0
 # i-th job's processing time at j-th machine
 processingTimes = []
+seed = 0
 
 # For the SA, we need to keep track of the current and the old best solutions.
 # They'll only represent the order in which the tasks should be executed.
@@ -16,18 +17,15 @@ processingTimes = []
 oldbest = []
 newbest = []
 
-def read_values(filename):
+def readValues(filename):
     with open('../inputs/' + filename) as f:
         return [int(elem) for elem in f.read().split()]
 
-def read_input(nbtasks, nbmachines, processingTimes):
-    problem = []
-
-    inputFile = iter(read_values(sys.argv[1]))
+def readInput():
+    inputFile = iter(readValues(sys.argv[1]))
     nbtasks = int(next(inputFile))
     nbmachines = int(next(inputFile))
-    problem.append(nbtasks)
-    problem.append(nbmachines)
+    seed = sys.argv[2]
 
     for i in range(nbtasks):
         temp = []
@@ -38,32 +36,45 @@ def read_input(nbtasks, nbmachines, processingTimes):
             time = int(next(inputFile))
             temp.append(time)
         processingTimes.append(temp)
-    problem.append(processingTimes)
 
     print(nbtasks)
     print(nbmachines)
     print(processingTimes)
+    print(seed)
 
-    return problem
+    return nbtasks, nbmachines, processingTimes, seed
 
 # the initial random solution
-def random_neighboor(n):
+def randomNeighboor(nbtasks, seed):
     #sol = list(range(0,nbtasks)) # list of integers from 0 to nbtasks-1
     #random.shuffle(sol)
-    sol = random.sample(range(0, n), n)
+    random.seed(seed)
+    sol = random.sample(range(0, nbtasks), nbtasks)
     return sol
 
 
+def makespan(sol, processingTimes, nbtasks, nbmachines):
+    # list for the time passed until the finishing of the job
+    cost = [0] * nbtasks
+    # for each machine, total time passed will be updated
+    for m in range(0, nbmachines):
+        for t in range(nbtasks):
+            # time passed so far until the task starts to process
+            cost_so_far = cost[t]
+            if t > 0:
+                cost_so_far = max(cost[t - 1], cost[t])
+            cost[t] = cost_so_far + processingTimes[sol[t]][m]
+    return cost[nbtasks - 1]
+
 
 # EXECUTION
-if len(sys.argv) < 2:
-    print("Usage: python3 pfsp.py inputFile")
+if len(sys.argv) < 3:
+    print("Usage: python3 pfsp.py inputFile seed")
     sys.exit(1)
 
-problem = read_input(nbtasks, nbmachines, processingTimes)
-nbtasks = problem[0]
-nbmachines = problem[1]
-processingTimes = problem[2]
+nbtasks, nbmachines, processingTimes, seed = readInput()
 
-solution = random_neighboor(nbtasks)
+solution = randomNeighboor(nbtasks, seed)
 print(solution)
+makespan = makespan(solution, processingTimes, nbtasks, nbmachines)
+print(makespan)
