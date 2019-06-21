@@ -1,12 +1,15 @@
 #!/usr/bin/python3
 import sys
 import random
+import numpy as np
+import pprint as p
 
 # number of jobs and machines
 nbtasks = 0
 nbmachines = 0
 # i-th job's processing time at j-th machine
 processingTimes = []
+seed = 0
 
 # For the SA, we need to keep track of the current and the old best solutions.
 # They'll only represent the order in which the tasks should be executed.
@@ -17,16 +20,15 @@ processingTimes = []
 oldbest = []
 newbest = []
 
-def read_values(filename):
+def readValues(filename):
     with open('../inputs/' + filename) as f:
         return [int(elem) for elem in f.read().split()]
 
-def read_input(nbtasks, nbmachines, processingTimes):
-    problem = []
-
-    inputFile = iter(read_values(sys.argv[1]))
+def readInput():
+    inputFile = iter(readValues(sys.argv[1]))
     nbtasks = int(next(inputFile))
     nbmachines = int(next(inputFile))
+    seed = sys.argv[2]
 
     for i in range(nbtasks):
         temp = []
@@ -38,48 +40,66 @@ def read_input(nbtasks, nbmachines, processingTimes):
             temp.append(time)
         processingTimes.append(temp)
 
-    print(nbtasks)
-    print(nbmachines)
-    print(processingTimes)
+    #print(nbtasks)
+    #print(nbmachines)
+    #print(processingTimes)
+    #print(seed)
 
-    return nbtasks, nbmachines, processingTimes
+    return nbtasks, nbmachines, processingTimes, seed
 
-# the initial random solution
-def random_neighboor(n):
-    #sol = list(range(0,nbtasks)) # list of integers from 0 to nbtasks-1
-    #random.shuffle(sol)
-    sol = random.sample(range(0, n), n)
+# The initial random solution
+def randomNeighboor(nbtasks, seed):
+    random.seed(seed)
+    sol = random.sample(range(0, nbtasks), nbtasks)
     return sol
 
-# calculates the makespan
-def makespan(sol, nbtasks, nbmachines, processingTimes):
+# Calculates the makespan given a solution
+# (an order in which the tasks should be executed).
+# For each task (except first), the total time passed on a given machine is:
+# The maximum time passed until it finishes processing on the previous machine
+# or the time passed for predecessor job to finish on the current machine
+# Time passed for a job to finish on a machine is:
+# the total time passed so far (the sommatory of the executions)
+# + time it takes to finish the current task on the machine
+def calcMakespan(sol, processingTimes, nbtasks, nbmachines):
     # list for the time passed until the finishing of the job
     cost = [0] * nbtasks
-    # for each machine, update the time passed
-    for m in range(0, nbmachines):
-        for t in range(0, nbtasks):
-            # time passed so far until the tast starts to run
-            costSoFar = cost[t]
+    # for each machine, total time passed will be updated
+    for machine in range(0, nbmachines):
+        for task in range(0, nbtasks):
+            # cumulative time passed so far until the task starts to process
+            costSoFar = cost[task]
+            # except the first task
+            if task > 0:
+                costSoFar = max(cost[task - 1], cost[task])
 
-            # except for the first task
-            if t > 0:
-                costSoFar = max(cost[t - 1], cost[t])
-            # adds to the cost of t the time it took so far plus the time to process t in m
-            cost[t] = costSoFar + processingTimes[sol[t]][m]
-
-    # returns the last cost calculated
+            cost[task] = costSoFar + processingTimes[sol[task]][machine]
     return cost[nbtasks - 1]
 
+# Generates a better solution given a current solution.
+# The considered criteria to generate this initial better solution is
+# the mean execution time the task takes to execute in all the machines.
+def newNeighboor(sol, processingTimes):
+    neighboor = np.array(processingTimes)
+    neighboor = np.mean(neighboor, axis = 1)
+    p.pprint(neighboor)
+    minMean = np.argmin(neighboor)
+    maxMean = np.argmax(neighboor)
+    print("min {}".format(minMean))
+    print("max {}".format(maxMean))
 
 # EXECUTION
-if len(sys.argv) < 2:
-    print("Usage: python3 pfsp.py inputFile")
+if len(sys.argv) < 3:
+    p.pprint("Usage: python3 pfsp.py inputFile seed")
     sys.exit(1)
 
-nbtasks, nbmachines, processingTimes = read_input(nbtasks, nbmachines, processingTimes)
+# reads the input and initializes the variables
+nbtasks, nbmachines, processingTimes, seed = readInput()
 
-solution = random_neighboor(nbtasks)
-print(solution)
+p.pprint(processingTimes)
+solution = randomNeighboor(nbtasks, seed)
+p.pprint(solution)
+makespan = calcMakespan(solution, processingTimes, nbtasks, nbmachines)
+p.pprint(makespan)
 
-makespan = makespan(solution, nbtasks, nbmachines, processingTimes)
-print(makespan)
+newNeighboor(solution, processingTimes)
