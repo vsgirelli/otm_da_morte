@@ -21,7 +21,7 @@ oldbest = []
 newbest = []
 
 def readValues(filename):
-    with open('../inputs/' + filename) as f:
+    with open(filename) as f:
         return [int(elem) for elem in f.read().split()]
 
 def readInput():
@@ -77,16 +77,33 @@ def calcMakespan(sol, processingTimes, nbtasks, nbmachines):
     return cost[nbtasks - 1]
 
 # Generates a better solution given a current solution.
-# The considered criteria to generate this initial better solution is
-# the mean execution time the task takes to execute in all the machines.
-def newNeighboor(sol, processingTimes):
-    neighboor = np.array(processingTimes)
-    neighboor = np.mean(neighboor, axis = 1)
-    p.pprint(neighboor)
-    minMean = np.argmin(neighboor)
-    maxMean = np.argmax(neighboor)
-    print("min {}".format(minMean))
-    print("max {}".format(maxMean))
+# We will, in each iteration, change the order in which the tasks will be executed
+# based on the tasks' mean execution time.
+# Therefore, in the first iteration, the task with the smaller mean execution time
+# will be swaped with the first task to be executed in the given solution.
+# In the second iteration, the second smaller mean execution time will be swaped
+# with the second task to be executed in the given solution, and so on.
+def newNeighboor(sol, processingTimes, iteration):
+    print("Initial random solution")
+    p.pprint(sol)
+    # just generating a numpy array with the processingTimes
+    means = np.array(processingTimes)
+    # taking the mean execution time for each task
+    means = np.mean(means, axis = 1)
+
+    print("Means:")
+    p.pprint(means)
+
+    indexes = np.argsort(means)
+    print("indexes sorted")
+    p.pprint(indexes)
+
+    # swaps the iteration'th element of the solution with the
+    # iteration'th smaller mean execution time
+    sol[iteration], sol[indexes[iteration]] = sol[indexes[iteration]], sol[iteration]
+    print("new swaped solution")
+    p.pprint(sol)
+    return sol
 
 # EXECUTION
 if len(sys.argv) < 3:
@@ -96,10 +113,15 @@ if len(sys.argv) < 3:
 # reads the input and initializes the variables
 nbtasks, nbmachines, processingTimes, seed = readInput()
 
-p.pprint(processingTimes)
+#p.pprint(processingTimes)
+# first random solution
 solution = randomNeighboor(nbtasks, seed)
-p.pprint(solution)
+# calculating the makespan
 makespan = calcMakespan(solution, processingTimes, nbtasks, nbmachines)
-p.pprint(makespan)
-
-newNeighboor(solution, processingTimes)
+#p.pprint(makespan)
+# generating a better solution
+for iteration in range(0,(nbtasks//2)):
+    solution = newNeighboor(solution, processingTimes, iteration)
+    makespan = calcMakespan(solution, processingTimes, nbtasks, nbmachines)
+    print("Makespan:")
+    print(makespan)
