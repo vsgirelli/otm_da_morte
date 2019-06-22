@@ -286,3 +286,22 @@ https://github.com/rtshadow/flowshop
 https://github.com/suyunu/Flow-Shop-Scheduling
 https://github.com/topics/scheduling-problem
 https://github.com/topics/simulated-annealing?after=Y3Vyc29yOjMw&o=desc&s=stars&utf8=%E2%9C%93
+
+
+21/06/19
+
+Aos 45 do segundo tempo Valéria aprende que o SA é um algoritmo estocástico e
+que não tem mesmo como prever o comportamento dele, visto que o cálculo do omega
+é mesmo aleatório.
+No cálculo da chance de se atribuir essa solução pior, tem a questão de:
+
+calculate x = exp[ - (new_sol - oldbest) / T] // what's this?
+if x > omega:
+  oldbest = new_sol
+
+Como é estocástico, eu não tenho como prever o comportamento dele.
+A moral é que se a exponenciação com o delta/temp for maior que esse omega (que
+é gerado de forma aleatória a cada iteração), então a gente tenta essa solução
+piorada, senão segue o baile.
+
+Então lide com isso, Valéria.
