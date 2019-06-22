@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import sys
-sys.path.insert(0, './src/')
+import pprint as p
+sys.path.insert(0, 'src/')
 import pfsp
 
 def readValues(filename):

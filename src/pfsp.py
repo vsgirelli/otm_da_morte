@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 import sys
-import random
+import random as rand
 import numpy as np
 import pprint as p
 from sa import *
 
 # The initial random solution
 def randomNeighboor(nbtasks, seed):
-    random.seed(seed)
-    sol = random.sample(range(0, nbtasks), nbtasks)
+    rand.seed(seed)
+    sol = rand.sample(range(0, nbtasks), nbtasks)
     return sol
 
 # Calculates the makespan given a solution
