@@ -102,8 +102,10 @@ def newNeighboorMeans(sol, processingTimes, iteration):
 # This is not the smartest approach, but with it we can increase the number of iterations,
 # since the newNeighboorMeans is limited by the number of tasks.
 def newNeighboorRand(sol):
-    print("Hi")
-
+    idx = range(len(sol))
+    i1, i2 = rand.sample(idx, 2)
+    sol[i1], sol[i2] = sol[i2], sol[i1]
+    return sol
 
 # The initial random solution
 def randomNeighboor(nbtasks, seed):
@@ -159,7 +161,9 @@ def main(tasks, machines, times, iseed):
     # initially, for the neighboors being created accordingly with the mean execution times,
     # we're going to use the number of tasks as the maximum number of iterations
     # because it does not make sense to iterate more than this
-    saIter = nbtasks
+    #saIter = nbtasks
+    # For randomic generation of neighboors:
+    saIter = 5000
     # intial temperature TODO discover better inital values
     initTemp = 100.0
     # this can't be zero because there are some divisions for tempFinal
@@ -179,9 +183,9 @@ def main(tasks, machines, times, iseed):
         # first random solution
         oldBest = randomNeighboor(nbtasks, seed)
         oldBestValue = calcMakespan(oldBest, processingTimes, nbtasks, nbmachines)
-        print("oldBest and value")
-        p.pprint(oldBest)
-        p.pprint(oldBestValue)
+        #print("oldBest and value")
+        #p.pprint(oldBest)
+        #p.pprint(oldBestValue)
         # remember to update the best one so far
         bestSol = oldBest
         bestSolValue = oldBestValue
@@ -202,11 +206,12 @@ def main(tasks, machines, times, iseed):
             #list_temp[ite]=(temp/initTemp)
 
             # creates a new neighboor and checks its makespan
-            newBest = newNeighboor(oldBest, processingTimes, ite)
+            #newBest = newNeighboorMeans(oldBest, processingTimes, ite)
+            newBest = newNeighboorRand(oldBest)
             newBestValue = calcMakespan(newBest, processingTimes, nbtasks, nbmachines)
-            print("newBest and value")
-            p.pprint(newBest)
-            p.pprint(newBestValue)
+            #print("newBest and value")
+            #p.pprint(newBest)
+            #p.pprint(newBestValue)
 
             # checks if it is the best solution so far
             if (bestSolValue >= newBestValue):
