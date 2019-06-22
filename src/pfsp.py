@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import hashlib
 
 # Here we're going to test different cooling functions
-# some of the cooling functions are from:
+# Some of the cooling functions are from:
 # http://www.btluke.com/simanf1.html
 def cool0(i,N,initTemp,finalTemp):
     return (initTemp-i*((initTemp-finalTemp)/N))
@@ -101,10 +101,29 @@ def newNeighboorMeans(sol, processingTimes, iteration):
 # Just randomicaly swaps two tasks.
 # This is not the smartest approach, but with it we can increase the number of iterations,
 # since the newNeighboorMeans is limited by the number of tasks.
-def newNeighboorRand(sol):
+# Another approach is to swap more than only two elements if the number of tasks is big enough:
+# If the number of tasks is bigger than x, then swap two more elements.
+def newNeighboorRandTasks(sol):
     idx = range(len(sol))
-    i1, i2 = rand.sample(idx, 2)
-    sol[i1], sol[i2] = sol[i2], sol[i1]
+
+    # TODO
+    for swaps in range(10):
+        i1, i2 = rand.sample(idx, 2)
+        sol[i1], sol[i2] = sol[i2], sol[i1]
+    return sol
+
+# Just randomicaly swaps two tasks. Should be used with a great number of iterations (>1k).
+# Another approach is to swap more than only two elements as the number of iterations grows:
+# At each 1k iterations, increases the number of swaps.
+def newNeighboorRandIter(sol, iters):
+    idx = range(len(sol))
+
+    # when iters<1000, iters//1000 is equal to zero, and range(0) does not execute
+    # but when it's bigger than 0, it makes more swaps
+    for swaps in range((iters//1000) + 1):
+        i1, i2 = rand.sample(idx, 2)
+        sol[i1], sol[i2] = sol[i2], sol[i1]
+
     return sol
 
 # The initial random solution
