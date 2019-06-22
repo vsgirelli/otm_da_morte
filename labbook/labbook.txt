@@ -305,3 +305,8 @@ A moral é que se a exponenciação com o delta/temp for maior que esse omega (q
 piorada, senão segue o baile.
 
 Então lide com isso, Valéria.
+
+Com seed 4, 5k iterações e geração randômica de vizinhos, pro problema 20_10_3
+cheguei a 1757, sendo que a sol ótima é 1592.
+Com geração de vizinhos a partir da média e com nbtasks iterações, cheguei a
+1900 e algo.
