@@ -35,11 +35,11 @@ param time{T};
 # Parametro big M
 param P := 1e6;
 
-param m := 15;
+param m;
 
 var c{(i,j) in T} >= 0;
 var Cmax >= 0;
-var d{(i,j) in T} binary;
+var d{(i,k) in N cross N: i < k } binary;
 
 minimize obj_makespan: Cmax;
 
