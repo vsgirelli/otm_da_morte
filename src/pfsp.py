@@ -1,9 +1,109 @@
 #!/usr/bin/python3
-import sys
 import random as rand
 import numpy as np
 import pprint as p
-from sa import *
+import sys, getopt
+from time import gmtime, strftime
+from queue import Queue,PriorityQueue
+import time
+import math
+import glob
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import hashlib
+
+# Here we're going to test different cooling functions
+# some of the cooling functions are from:
+# http://www.btluke.com/simanf1.html
+def cool0(i,N,initTemp,finalTemp):
+    return (initTemp-i*((initTemp-finalTemp)/N))
+
+def cool1(i,N,initTemp,finalTemp):
+    return (initTemp*((finalTemp/initTemp)**(i/N)))
+
+def cool2(i,N,initTemp,finalTemp):
+    A=(initTemp-finalTemp)*(N+1)/(N)+N/2
+    B=10#initTemp-A
+    return A/(i+1)+B
+
+def cool3(i,N,initTemp,finalTemp):
+    A=math.log(initTemp,N)
+    return initTemp-i**A
+
+def cool4(i,N,initTemp,finalTemp):
+    exxx = ((25/N)*(i-N/2))
+    exx = math.exp(exxx)
+    return (initTemp-finalTemp)/(1+exx)+finalTemp
+
+def cool5(i,N,initTemp,finalTemp):
+    return .5*(initTemp-finalTemp)*(1+math.cos(i*math.pi/N))+finalTemp
+
+def cool6(i,N,initTemp,finalTemp):
+    return 0.5*(initTemp-finalTemp)*(1-math.tanh(10*i/N-5))+finalTemp
+
+def cool7(i,N,initTemp,finalTemp):
+    return (initTemp-finalTemp)/math.cosh(10*i/N)+finalTemp
+
+def cool8(i,N,initTemp,finalTemp):
+    A = (1/N)*math.log(initTemp/finalTemp)
+    return initTemp*(math.e**(-A*i))
+
+def cool9(i,N,initTemp,finalTemp):
+    A = (1/(N**2))*math.log(initTemp/finalTemp)
+    return initTemp*(math.e**(-A*(i**2)))
+
+def calcTemp(i,N,initTemp,finalTemp,tipo):
+    if(tipo==0):
+        return cool0(i,N,initTemp,finalTemp)
+    elif(tipo==1):
+        return cool1(i,N,initTemp,finalTemp)
+    elif(tipo==2):
+        return cool2(i,N,initTemp,finalTemp)
+    elif(tipo==3):
+        return cool3(i,N,initTemp,finalTemp)
+    elif(tipo==4):
+        return cool4(i,N,initTemp,finalTemp)
+    elif(tipo==5):
+        return cool5(i,N,initTemp,finalTemp)
+    elif(tipo==6):
+        return cool6(i,N,initTemp,finalTemp)
+    elif(tipo==7):
+        return cool7(i,N,initTemp,finalTemp)
+    elif(tipo==8):
+        return cool8(i,N,initTemp,finalTemp)
+    elif(tipo==9):
+        return cool9(i,N,initTemp,finalTemp)
+    else:
+        return cool0(i,N,initTemp,finalTemp)
+
+# Generates a better solution given a current solution.
+# We will, in each iteration, change the order in which the tasks will be executed
+# based on the tasks' mean execution time.
+# Therefore, in the first iteration, the task with the smaller mean execution time
+# will be swaped with the first task to be executed in the given solution.
+# In the second iteration, the second smaller mean execution time will be swaped
+# with the second task to be executed in the given solution, and so on.
+def newNeighboorMeans(sol, processingTimes, iteration):
+    # just generating a numpy array with the processingTimes
+    means = np.array(processingTimes)
+    # taking the mean execution time for each task
+    means = np.mean(means, axis = 1)
+
+    # ordering the means array and saving the indexes ordered to swap
+    indexes = np.argsort(means)
+
+    # swaps the iteration'th element of the solution with the
+    # iteration'th smaller mean execution time
+    sol[iteration], sol[indexes[iteration]] = sol[indexes[iteration]], sol[iteration]
+    return sol
+
+# Just randomicaly swaps two tasks.
+# This is not the smartest approach, but with it we can increase the number of iterations,
+# since the newNeighboorMeans is limited by the number of tasks.
+def newNeighboorRand(sol):
+    print("Hi")
+
 
 # The initial random solution
 def randomNeighboor(nbtasks, seed):
@@ -34,32 +134,8 @@ def calcMakespan(sol, processingTimes, nbtasks, nbmachines):
             cost[task] = costSoFar + processingTimes[sol[task]][machine]
     return cost[nbtasks - 1]
 
-# Generates a better solution given a current solution.
-# We will, in each iteration, change the order in which the tasks will be executed
-# based on the tasks' mean execution time.
-# Therefore, in the first iteration, the task with the smaller mean execution time
-# will be swaped with the first task to be executed in the given solution.
-# In the second iteration, the second smaller mean execution time will be swaped
-# with the second task to be executed in the given solution, and so on.
-def newNeighboor(sol, processingTimes, iteration):
-    # just generating a numpy array with the processingTimes
-    means = np.array(processingTimes)
-    # taking the mean execution time for each task
-    means = np.mean(means, axis = 1)
-    #print("Means:")
-    #p.pprint(means)
 
-    # ordering the means array and saving the indexes ordered to swap
-    indexes = np.argsort(means)
-    #print("indexes sorted")
-    #p.pprint(indexes)
-
-    # swaps the iteration'th element of the solution with the
-    # iteration'th smaller mean execution time
-    sol[iteration], sol[indexes[iteration]] = sol[indexes[iteration]], sol[iteration]
-    return sol
-
-# EXECUTION
+# SA
 def main(tasks, machines, times, iseed):
     # number of jobs and machines
     nbtasks = tasks
@@ -70,29 +146,95 @@ def main(tasks, machines, times, iseed):
 
     # For the SA, we need to keep track of the current and the old best solutions.
     # They'll only represent the order in which the tasks should be executed.
-    # Ex: oldbest = [9, 3, 4, 1, 6, 2, 7, 0, 8, 5]
+    # Ex: oldBest = [9, 3, 4, 1, 6, 2, 7, 0, 8, 5]
     # is how the old best solution sheduled the tasks.
-    # When calculating the makespan, we're going to verify the execution times
-    # stored in processingTimes.
-    oldbest = []
-    newbest = []
+    oldBest = []
+    oldBestValue = None
+    newBest = []
+    newBestValue = None
+    # However, the bestSol is used to save the best solution of all
+    bestSol = []
 
-    # reads the input and initializes the variables
+    # number of iterations for the SA
+    # initially, for the neighboors being created accordingly with the mean execution times,
+    # we're going to use the number of tasks as the maximum number of iterations
+    # because it does not make sense to iterate more than this
+    saIter = nbtasks
+    # intial temperature TODO discover better inital values
+    initTemp = 100.0
+    # this can't be zero because there are some divisions for tempFinal
+    finalTemp = 1.0
+    # repetitions needed
+    rep = 10
 
-    #p.pprint(processingTimes)
-    # first random solution
-    solution = randomNeighboor(nbtasks, seed)
-    # calculating the makespan
-    makespan = calcMakespan(solution, processingTimes, nbtasks, nbmachines)
-    #p.pprint(makespan)
-    # generating a better solution
-    for iteration in range(0,(nbtasks//2)):
-        print("Initial random solution")
-        p.pprint(solution)
-        solution = newNeighboor(solution, processingTimes, iteration)
-        print("new swaped solution")
-        p.pprint(solution)
-        makespan = calcMakespan(solution, processingTimes, nbtasks, nbmachines)
-        print("Makespan:")
-        print(makespan)
+    temp = initTemp
+    # this is used to save results and make the plots, not important right now
+    list_pontos = np.zeros((rep,saIter))
+    list_temp = np.zeros((saIter))
+    list_tempos = np.zeros((rep))
 
+    # we can test different decreasing methods TODO
+    tipo = 1
+    for r in range(rep):
+        # first random solution
+        oldBest = randomNeighboor(nbtasks, seed)
+        oldBestValue = calcMakespan(oldBest, processingTimes, nbtasks, nbmachines)
+        print("oldBest and value")
+        p.pprint(oldBest)
+        p.pprint(oldBestValue)
+        # remember to update the best one so far
+        bestSol = oldBest
+        bestSolValue = oldBestValue
+
+        # this is used to save results and make the plots, not important right now
+        print("Execucao:"+str(r) + " Funcao:"+str(tipo))
+        start_time = time.time()
+
+        ite = 0
+        while ( ite < saIter):
+            # decreases the temperature TODO this needs to be checked
+            temp = calcTemp(ite,saIter,initTemp,finalTemp,tipo)-1
+            if( temp < 0):
+                temp = 0
+
+            # this is used to save results and make the plots, not important right now
+            #list_pontos[r][ite]= (ncla-ponto)/ncla
+            #list_temp[ite]=(temp/initTemp)
+
+            # creates a new neighboor and checks its makespan
+            newBest = newNeighboor(oldBest, processingTimes, ite)
+            newBestValue = calcMakespan(newBest, processingTimes, nbtasks, nbmachines)
+            print("newBest and value")
+            p.pprint(newBest)
+            p.pprint(newBestValue)
+
+            # checks if it is the best solution so far
+            if (bestSolValue >= newBestValue):
+                bestSol = newBest
+                bestSolValue = newBestValue
+
+            delta = newBestValue - oldBestValue
+            ite+=1
+            # if delta <= 0, the new solution has a better makespan that the previous one
+            # therefore, the oldBest must be updated
+            if( delta <= 0):
+                oldBest = newBest
+                oldBestValue = newBestValue
+            # if the solution has not a better makespan
+            else:
+                # then, to accept a worse solution, the following condition must be satisfied:
+                if(temp > 0 and math.exp(-delta/temp) > rand.uniform(0, 1)):
+                    # A worse solution is only accepted given the above probability.
+                    # I don't know how to explaing it mathematicaly, but there's a lot about it in my labbook.
+                    oldBest = newBest
+                    oldBestValue = newBestValue
+
+        # this is used to save results and make the plots, not important right now
+        list_tempos[r]=(time.time() - start_time)
+
+    print("final solution and value:")
+    p.pprint(bestSol)
+    p.pprint(bestSolValue)
+    # this is used to save results and make the plots, not important right now
+    real_final = list_pontos.mean(axis=0)
+    listamenos = list_pontos.max(axis=1)
