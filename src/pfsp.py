@@ -6,6 +6,7 @@ import sys, getopt
 from time import gmtime, strftime
 import time
 import math
+import os.path
 
 # Here we're going to test different cooling functions
 # Some of the cooling functions are from:
@@ -69,7 +70,6 @@ def newNeighboorRandTasks(sol):
 
 # Just randomicaly swaps tasks. Should be used with a great number of iterations (>1k).
 # At each 1k iterations, increases the number of swaps.
-# TODO try to increase the number of iterations
 def newNeighboorRandIter(sol, iters):
     idx = range(len(sol))
 
@@ -129,14 +129,17 @@ def main(tasks, machines, times, iseed, fileName):
     nbmachines = machines
     # i-th job's processing time at j-th machine
     processingTimes = times
+    outDir = "./results/"
     if (iseed != None):
         # repetitions needed for a single seed
         rep = 1
-        f = open("../results/"+fileName+"_"+str(seed),"w+")
+        outFile = os.path.join(outDir, fileName + str(seed))
+        f = open(outFile, "w+")
     else:
         # repetitions needed for the 10 different seeds
         rep = 10
-        f = open("../results/"+fileName+"_"+str(rep),"w+")
+        outFile = os.path.join(outDir, fileName + str(rep))
+        f = open(outFile, "w+")
 
     # For the SA, we need to keep track of the current and the old best solutions.
     # They'll only represent the order in which the tasks should be executed.
@@ -215,8 +218,8 @@ def main(tasks, machines, times, iseed, fileName):
                     oldBest = newBest
                     oldBestValue = newBestValue
 
-        f.write("Final solution and value:")
+        f.write("\nFinal solution and value:")
         endTime = time.time() - startTime
-        f.write("Execution time: "+str(endTime) + "\n")
+        f.write("\nExecution time: "+str(endTime) + "\n\n")
 
     f.close()

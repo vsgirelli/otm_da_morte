@@ -43,4 +43,6 @@ if len(sys.argv) < 2:
         
 nbtasks, nbmachines, processingTimes, seed = readInput()
 filename = sys.argv[1]
-pfsp.main(nbtasks, nbmachines, processingTimes, seed, filename.split('/ .')[1])
+filename = filename.split('/')[1]
+filename = filename.split('.')[0]
+pfsp.main(nbtasks, nbmachines, processingTimes, seed, filename)
