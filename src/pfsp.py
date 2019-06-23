@@ -182,7 +182,7 @@ def main(tasks, machines, times, iseed, fileName):
         bestSol = oldBest
         bestSolValue = oldBestValue
 
-        f.write("Execucao: "+str(r) + " Seed: "+str(seed))
+        f.write("Execution: "+str(r) + " Seed: "+str(seed))
         startTime = time.time()
 
         ite = 0
@@ -218,7 +218,8 @@ def main(tasks, machines, times, iseed, fileName):
                     oldBest = newBest
                     oldBestValue = newBestValue
 
-        f.write("\nFinal solution and value:")
+        f.write("\nFinal solution and makespan:")
+        f.write("\n"+str(bestSol)+"\n"+str(bestSolValue))
         endTime = time.time() - startTime
         f.write("\nExecution time: "+str(endTime) + "\n\n")
 
