@@ -18,66 +18,26 @@ import hashlib
 # http://www.btluke.com/simanf1.html
 # These functions decide how the temperature will be decreased.
 # As the temperature decreases, so decreases the chances of a worse solution to be accepted.
-def cool0(i,N,initTemp,finalTemp):
-    return (initTemp-i*((initTemp-finalTemp)/N))
+def cool0(ite,saIter,initTemp,finalTemp):
+    return (initTemp-ite*((initTemp-finalTemp)/saIter))
 
-def cool1(i,N,initTemp,finalTemp):
-    return (initTemp*((finalTemp/initTemp)**(i/N)))
+def cool1(ite,saIter,initTemp,finalTemp):
+    return (initTemp*((finalTemp/initTemp)**(ite/saIter)))
 
-def cool2(i,N,initTemp,finalTemp):
-    A=(initTemp-finalTemp)*(N+1)/(N)+N/2
+def cool2(ite,saIter,initTemp,finalTemp):
+    A=(initTemp-finalTemp)*(saIter+1)/(saIter)+saIter/2
     B=10#initTemp-A
-    return A/(i+1)+B
+    return A/(ite+1)+B
 
-def cool3(i,N,initTemp,finalTemp):
-    A=math.log(initTemp,N)
-    return initTemp-i**A
-
-def cool4(i,N,initTemp,finalTemp):
-    exxx = ((25/N)*(i-N/2))
-    exx = math.exp(exxx)
-    return (initTemp-finalTemp)/(1+exx)+finalTemp
-
-def cool5(i,N,initTemp,finalTemp):
-    return .5*(initTemp-finalTemp)*(1+math.cos(i*math.pi/N))+finalTemp
-
-def cool6(i,N,initTemp,finalTemp):
-    return 0.5*(initTemp-finalTemp)*(1-math.tanh(10*i/N-5))+finalTemp
-
-def cool7(i,N,initTemp,finalTemp):
-    return (initTemp-finalTemp)/math.cosh(10*i/N)+finalTemp
-
-def cool8(i,N,initTemp,finalTemp):
-    A = (1/N)*math.log(initTemp/finalTemp)
-    return initTemp*(math.e**(-A*i))
-
-def cool9(i,N,initTemp,finalTemp):
-    A = (1/(N**2))*math.log(initTemp/finalTemp)
-    return initTemp*(math.e**(-A*(i**2)))
-
-def calcTemp(i,N,initTemp,finalTemp,tipo):
+def calcTemp(ite,saIter,initTemp,finalTemp,tipo):
     if(tipo==0):
-        return cool0(i,N,initTemp,finalTemp)
+        return cool0(ite,saIter,initTemp,finalTemp)
     elif(tipo==1):
-        return cool1(i,N,initTemp,finalTemp)
+        return cool1(ite,saIter,initTemp,finalTemp)
     elif(tipo==2):
-        return cool2(i,N,initTemp,finalTemp)
-    elif(tipo==3):
-        return cool3(i,N,initTemp,finalTemp)
-    elif(tipo==4):
-        return cool4(i,N,initTemp,finalTemp)
-    elif(tipo==5):
-        return cool5(i,N,initTemp,finalTemp)
-    elif(tipo==6):
-        return cool6(i,N,initTemp,finalTemp)
-    elif(tipo==7):
-        return cool7(i,N,initTemp,finalTemp)
-    elif(tipo==8):
-        return cool8(i,N,initTemp,finalTemp)
-    elif(tipo==9):
-        return cool9(i,N,initTemp,finalTemp)
+        return cool2(ite,saIter,initTemp,finalTemp)
     else:
-        return cool0(i,N,initTemp,finalTemp)
+        return cool0(ite,saIter,initTemp,finalTemp)
 
 # Generates a better solution given a current solution.
 # We will, in each iteration, change the order in which the tasks will be executed
@@ -175,7 +135,7 @@ def main(tasks, machines, times, iseed):
     nbmachines = machines
     # i-th job's processing time at j-th machine
     processingTimes = times
-    seed = iseed
+    #seed = iseed
 
     # For the SA, we need to keep track of the current and the old best solutions.
     # They'll only represent the order in which the tasks should be executed.
@@ -195,55 +155,42 @@ def main(tasks, machines, times, iseed):
     # because it does not make sense to iterate more than this
     #saIter = nbtasks
     # For randomic generation of neighboors:
+    # the inital value was 100, and then 5k. 50k is the best value we found.
     saIter = 50000
-    # intial temperature TODO discover better inital values
-    initTemp = 500.0
+    # intial temperature
+    initTemp = 100.0
     # this can't be zero because there are some divisions for tempFinal
     finalTemp = 1.0
     # repetitions needed
     rep = 10
 
     temp = initTemp
-    # this is used to save results and make the plots, not important right now
-    list_pontos = np.zeros((rep,saIter))
-    list_temp = np.zeros((saIter))
-    list_tempos = np.zeros((rep))
 
-    # we can test different decreasing methods TODO
-    tipo = 1
-    for r in range(rep):
+    # We tested different cooling methods, but using the 2 we got the best results.
+    tipo = 2
+
+    # Executing the 10 repetitions, one with a different seed ranging from 0 to 10
+    for r, seed in zip(range(rep), range(rep)):
         # first random solution
         oldBest = randomNeighboor(nbtasks, seed)
         oldBestValue = calcMakespan(oldBest, processingTimes, nbtasks, nbmachines)
-        #print("oldBest and value")
-        #p.pprint(oldBest)
-        #p.pprint(oldBestValue)
         # remember to update the best one so far
         bestSol = oldBest
         bestSolValue = oldBestValue
 
-        # this is used to save results and make the plots, not important right now
-        print("Execucao:"+str(r) + " Funcao:"+str(tipo))
-        start_time = time.time()
+        print("Execucao: "+str(r) + " Seed: "+str(seed))
+        startTime = time.time()
 
         ite = 0
         while ( ite < saIter):
-            # decreases the temperature TODO this needs to be checked
+            # decreases the temperature
             temp = calcTemp(ite,saIter,initTemp,finalTemp,tipo)-1
             if( temp < 0):
                 temp = 0
 
-            # this is used to save results and make the plots, not important right now
-            #list_pontos[r][ite]= (ncla-ponto)/ncla
-            #list_temp[ite]=(temp/initTemp)
-
             # creates a new neighboor and checks its makespan
-            #newBest = newNeighboorMeans(oldBest, processingTimes, ite)
             newBest = newNeighboorRandIter(oldBest, ite)
             newBestValue = calcMakespan(newBest, processingTimes, nbtasks, nbmachines)
-            #print("newBest and value")
-            #p.pprint(newBest)
-            #p.pprint(newBestValue)
 
             # checks if it is the best solution so far
             if (bestSolValue >= newBestValue):
@@ -267,12 +214,8 @@ def main(tasks, machines, times, iseed):
                     oldBest = newBest
                     oldBestValue = newBestValue
 
-        # this is used to save results and make the plots, not important right now
-        list_tempos[r]=(time.time() - start_time)
-
-    print("final solution and value:")
-    p.pprint(bestSol)
-    p.pprint(bestSolValue)
-    # this is used to save results and make the plots, not important right now
-    real_final = list_pontos.mean(axis=0)
-    listamenos = list_pontos.max(axis=1)
+        print("Final solution and value:")
+        p.pprint(bestSol)
+        p.pprint(bestSolValue)
+        endTime = time.time() - startTime
+        print("Execution time: "+str(endTime) + "\n")

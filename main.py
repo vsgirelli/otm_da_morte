@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import random as rand
 import sys
 import pprint as p
 sys.path.insert(0, 'src/')

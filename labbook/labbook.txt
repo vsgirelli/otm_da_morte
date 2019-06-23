@@ -327,3 +327,10 @@ O que ela quer é então 10 execuções pra cada instância, com 10 seeds difere
 (seeds variando de 1 a 10).
 Vou fazer um script que, pra cada instância, vai executar 10 vezes com seeds
 diferentes. 
+
+Testamos com as temps 0, 1 e 2, e vimos que com a 2 chegávamos a soluções
+ótimas, então usamos a 2.
+As iterações foram alteradas de 100, 5k e 50k, com 50k ficando bom pra problemas
+maiores, enquanto que com 5k só com tamanhos médios.
+
+Agora: fazer as 10 execs com 10 seeds.
