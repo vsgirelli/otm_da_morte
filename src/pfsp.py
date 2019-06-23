@@ -98,22 +98,20 @@ def newNeighboorMeans(sol, processingTimes, iteration):
     sol[iteration], sol[indexes[iteration]] = sol[indexes[iteration]], sol[iteration]
     return sol
 
-# Just randomicaly swaps two tasks.
-# This is not the smartest approach, but with it we can increase the number of iterations,
-# since the newNeighboorMeans is limited by the number of tasks.
-# Another approach is to swap more than only two elements if the number of tasks is big enough:
-# If the number of tasks is bigger than x, then swap two more elements.
+# Just randomicaly swaps tasks.
+# The number of swaps depends on the number of tasks.
+# At each 100 tasks, increases the number of swaps.
+# For ex: for 500 tasks will be performed 5 swaps per iteration.
 def newNeighboorRandTasks(sol):
     idx = range(len(sol))
 
-    # TODO
-    for swaps in range(10):
+    for swaps in range((len(sol)//100) + 1):
         i1, i2 = rand.sample(idx, 2)
         sol[i1], sol[i2] = sol[i2], sol[i1]
+
     return sol
 
-# Just randomicaly swaps two tasks. Should be used with a great number of iterations (>1k).
-# Another approach is to swap more than only two elements as the number of iterations grows:
+# Just randomicaly swaps tasks. Should be used with a great number of iterations (>1k).
 # At each 1k iterations, increases the number of swaps.
 def newNeighboorRandIter(sol, iters):
     idx = range(len(sol))
@@ -121,6 +119,17 @@ def newNeighboorRandIter(sol, iters):
     # when iters<1000, iters//1000 is equal to zero, and range(0) does not execute
     # but when it's bigger than 0, it makes more swaps
     for swaps in range((iters//1000) + 1):
+        i1, i2 = rand.sample(idx, 2)
+        sol[i1], sol[i2] = sol[i2], sol[i1]
+
+    return sol
+
+# Just randomicaly swaps tasks. Should be used with a great number of iterations (>1k).
+# At each iteration, swaps a random number of tasks (smaller than the number of tasks).
+def newNeighboorRandIter(sol, iters):
+    idx = range(len(sol))
+
+    for swaps in range(rand.randint(0, len(sol))):
         i1, i2 = rand.sample(idx, 2)
         sol[i1], sol[i2] = sol[i2], sol[i1]
 
@@ -226,7 +235,7 @@ def main(tasks, machines, times, iseed):
 
             # creates a new neighboor and checks its makespan
             #newBest = newNeighboorMeans(oldBest, processingTimes, ite)
-            newBest = newNeighboorRand(oldBest)
+            newBest = newNeighboorRandTasks(oldBest)
             newBestValue = calcMakespan(newBest, processingTimes, nbtasks, nbmachines)
             #print("newBest and value")
             #p.pprint(newBest)
