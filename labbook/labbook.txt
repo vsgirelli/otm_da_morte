@@ -334,3 +334,7 @@ As iterações foram alteradas de 100, 5k e 50k, com 50k ficando bom pra problem
 maiores, enquanto que com 5k só com tamanhos médios.
 
 Agora: fazer as 10 execs com 10 seeds.
+
+TODO:
+arrumar a escrita em arquivo.
+

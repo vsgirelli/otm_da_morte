@@ -13,7 +13,10 @@ def readInput():
     inputFile = iter(readValues(sys.argv[1]))
     nbtasks = int(next(inputFile))
     nbmachines = int(next(inputFile))
-    seed = sys.argv[2]
+    if (len(sys.argv) > 2):
+        seed = sys.argv[2]
+    else:
+        seed = None
     processingTimes = []
 
     for i in range(nbtasks):
@@ -34,9 +37,10 @@ def readInput():
     return nbtasks, nbmachines, processingTimes, seed
 
 
-if len(sys.argv) < 3:
-    p.pprint("Usage: python3 pfsp.py inputFile seed")
+if len(sys.argv) < 2:
+    p.pprint("Usage: python3 pfsp.py inputFile")
     sys.exit(1)
         
 nbtasks, nbmachines, processingTimes, seed = readInput()
-pfsp.main(nbtasks, nbmachines, processingTimes, seed)
+filename = sys.argv[1]
+pfsp.main(nbtasks, nbmachines, processingTimes, seed, filename.split('/ .')[1])

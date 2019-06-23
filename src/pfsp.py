@@ -4,14 +4,8 @@ import numpy as np
 import pprint as p
 import sys, getopt
 from time import gmtime, strftime
-from queue import Queue,PriorityQueue
 import time
 import math
-import glob
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import hashlib
 
 # Here we're going to test different cooling functions
 # Some of the cooling functions are from:
@@ -129,13 +123,20 @@ def calcMakespan(sol, processingTimes, nbtasks, nbmachines):
 
 
 # SA
-def main(tasks, machines, times, iseed):
+def main(tasks, machines, times, iseed, fileName):
     # number of jobs and machines
     nbtasks = tasks
     nbmachines = machines
     # i-th job's processing time at j-th machine
     processingTimes = times
-    #seed = iseed
+    if (iseed != None):
+        # repetitions needed for a single seed
+        rep = 1
+        f = open("../results/"+fileName+"_"+str(seed),"w+")
+    else:
+        # repetitions needed for the 10 different seeds
+        rep = 10
+        f = open("../results/"+fileName+"_"+str(rep),"w+")
 
     # For the SA, we need to keep track of the current and the old best solutions.
     # They'll only represent the order in which the tasks should be executed.
@@ -161,8 +162,6 @@ def main(tasks, machines, times, iseed):
     initTemp = 100.0
     # this can't be zero because there are some divisions for tempFinal
     finalTemp = 1.0
-    # repetitions needed
-    rep = 10
 
     temp = initTemp
 
@@ -171,6 +170,8 @@ def main(tasks, machines, times, iseed):
 
     # Executing the 10 repetitions, one with a different seed ranging from 0 to 10
     for r, seed in zip(range(rep), range(rep)):
+        if (iseed != None):
+            seed = iseed
         # first random solution
         oldBest = randomNeighboor(nbtasks, seed)
         oldBestValue = calcMakespan(oldBest, processingTimes, nbtasks, nbmachines)
@@ -178,7 +179,7 @@ def main(tasks, machines, times, iseed):
         bestSol = oldBest
         bestSolValue = oldBestValue
 
-        print("Execucao: "+str(r) + " Seed: "+str(seed))
+        f.write("Execucao: "+str(r) + " Seed: "+str(seed))
         startTime = time.time()
 
         ite = 0
@@ -214,8 +215,8 @@ def main(tasks, machines, times, iseed):
                     oldBest = newBest
                     oldBestValue = newBestValue
 
-        print("Final solution and value:")
-        p.pprint(bestSol)
-        p.pprint(bestSolValue)
+        f.write("Final solution and value:")
         endTime = time.time() - startTime
-        print("Execution time: "+str(endTime) + "\n")
+        f.write("Execution time: "+str(endTime) + "\n")
+
+    f.close()
