@@ -14,9 +14,10 @@ random
 pprint
 time
 math
+os
 
 A instalação das bibliotecas acima citadas pode ser feita da seguinte forma:
-pip install numpy random pprint time math
+pip install numpy random pprint time math os
 
 Intruções de execução:
 
@@ -31,6 +32,7 @@ Caso o usuário tenha interesse em informar uma seed diferente, o mesmo pode ser
 como indicado a seguir:
 
 python3 main.py inputs/<input_file> <seed>
+
 
 Cada execução gera um arquivo de saída que fica disponível no diretório results.
 O nome do arquivo de saída é dado por:
