@@ -310,3 +310,20 @@ Com seed 4, 5k iterações e geração randômica de vizinhos, pro problema 20_1
 cheguei a 1757, sendo que a sol ótima é 1592.
 Com geração de vizinhos a partir da média e com nbtasks iterações, cheguei a
 1900 e algo.
+
+
+
+22/06/19
+
+As the temperature decreases, the chances of a worse solution be accepted also
+decreases. Therefore, we need to choose the best cooling function given our results.
+
+Testando a cooling function 2, a gente viu que os resultados tavam melhores do
+que pra 1. Daí concluímos que ele basicamente passa menos tempo com temperaturas
+altas e vai passar mais tempo focando em temperaturas baixas, que vão resultar
+em maior aceitação de resultados piores.
+
+O que ela quer é então 10 execuções pra cada instância, com 10 seeds diferentes
+(seeds variando de 1 a 10).
+Vou fazer um script que, pra cada instância, vai executar 10 vezes com seeds
+diferentes. 

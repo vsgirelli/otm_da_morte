@@ -16,6 +16,8 @@ import hashlib
 # Here we're going to test different cooling functions
 # Some of the cooling functions are from:
 # http://www.btluke.com/simanf1.html
+# These functions decide how the temperature will be decreased.
+# As the temperature decreases, so decreases the chances of a worse solution to be accepted.
 def cool0(i,N,initTemp,finalTemp):
     return (initTemp-i*((initTemp-finalTemp)/N))
 
@@ -113,6 +115,7 @@ def newNeighboorRandTasks(sol):
 
 # Just randomicaly swaps tasks. Should be used with a great number of iterations (>1k).
 # At each 1k iterations, increases the number of swaps.
+# TODO try to increase the number of iterations
 def newNeighboorRandIter(sol, iters):
     idx = range(len(sol))
 
@@ -126,7 +129,7 @@ def newNeighboorRandIter(sol, iters):
 
 # Just randomicaly swaps tasks. Should be used with a great number of iterations (>1k).
 # At each iteration, swaps a random number of tasks (smaller than the number of tasks).
-def newNeighboorRandIter(sol, iters):
+def newNeighboorRandRand(sol, iters):
     idx = range(len(sol))
 
     for swaps in range(rand.randint(0, len(sol))):
@@ -184,6 +187,7 @@ def main(tasks, machines, times, iseed):
     newBestValue = None
     # However, the bestSol is used to save the best solution of all
     bestSol = []
+    bestSolValue = None
 
     # number of iterations for the SA
     # initially, for the neighboors being created accordingly with the mean execution times,
@@ -191,9 +195,9 @@ def main(tasks, machines, times, iseed):
     # because it does not make sense to iterate more than this
     #saIter = nbtasks
     # For randomic generation of neighboors:
-    saIter = 5000
+    saIter = 50000
     # intial temperature TODO discover better inital values
-    initTemp = 100.0
+    initTemp = 500.0
     # this can't be zero because there are some divisions for tempFinal
     finalTemp = 1.0
     # repetitions needed
@@ -235,7 +239,7 @@ def main(tasks, machines, times, iseed):
 
             # creates a new neighboor and checks its makespan
             #newBest = newNeighboorMeans(oldBest, processingTimes, ite)
-            newBest = newNeighboorRandTasks(oldBest)
+            newBest = newNeighboorRandIter(oldBest, ite)
             newBestValue = calcMakespan(newBest, processingTimes, nbtasks, nbmachines)
             #print("newBest and value")
             #p.pprint(newBest)
@@ -258,7 +262,8 @@ def main(tasks, machines, times, iseed):
                 # then, to accept a worse solution, the following condition must be satisfied:
                 if(temp > 0 and math.exp(-delta/temp) > rand.uniform(0, 1)):
                     # A worse solution is only accepted given the above probability.
-                    # I don't know how to explaing it mathematicaly, but there's a lot about it in my labbook.
+                    # As the temperature decreases,
+                    # the chances of a worse solution be accepted also decreases.
                     oldBest = newBest
                     oldBestValue = newBestValue
 
