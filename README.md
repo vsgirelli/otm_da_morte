@@ -42,7 +42,7 @@ Sendo <input_file> o nome de um arquivo contendo uma instância.
 Caso o usuário tenha interesse em informar uma seed diferente, o mesmo pode ser feito
 como indicado a seguir:
 
-python3 main.py inputs/<input_file> <seed>
+python3 main.py inputs/<input_file> &lt;seed>
 
 
 Cada execução gera um arquivo de saída que fica disponível no diretório results.

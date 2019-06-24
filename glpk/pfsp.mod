@@ -55,7 +55,6 @@ s.t. JOB_O1 { i in N, k in N, r in M: k > i}: c[i,r] - c[k,r] + P * d[i,k] >= ti
 s.t. JOB_O2 { i in N, k in N, r in M: k > i}: c[i,r] - c[k,r] + P * d[i,k] <= P - time[k,r];
 
 # O tempo de completude da tarefa vai ser igual ao makespan
-#s.t. MKSPAN { i in N, r in M}: Cmax >= c[i,r];
 s.t. MKSPAN {i in N}: Cmax >= c[i,m];
 
 end;
