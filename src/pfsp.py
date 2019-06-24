@@ -129,16 +129,16 @@ def main(tasks, machines, times, iseed, fileName):
     nbmachines = machines
     # i-th job's processing time at j-th machine
     processingTimes = times
-    outDir = "./results/"
+    outDir = "./results/tasks/"
     if (iseed != None):
         # repetitions needed for a single seed
         rep = 1
-        outFile = os.path.join(outDir, fileName + str(seed))
+        outFile = os.path.join(outDir, fileName + "_" + str(iseed))
         f = open(outFile, "w+")
     else:
         # repetitions needed for the 10 different seeds
-        rep = 10
-        outFile = os.path.join(outDir, fileName + str(rep))
+        rep = 5
+        outFile = os.path.join(outDir, fileName + "_" + str(rep))
         f = open(outFile, "w+")
 
     # For the SA, we need to keep track of the current and the old best solutions.
@@ -160,7 +160,7 @@ def main(tasks, machines, times, iseed, fileName):
     #saIter = nbtasks
     # For randomic generation of neighboors:
     # the inital value was 100, and then 5k. 50k is the best value we found.
-    saIter = 50000
+    saIter = 10000
     # intial temperature
     initTemp = 100.0
     # this can't be zero because there are some divisions for tempFinal
@@ -171,6 +171,7 @@ def main(tasks, machines, times, iseed, fileName):
     # We tested different cooling methods, but using the 2 we got the best results.
     tipo = 2
 
+    soma = 0
     # Executing the 10 repetitions, one with a different seed ranging from 0 to 10
     for r, seed in zip(range(rep), range(rep)):
         if (iseed != None):
@@ -178,11 +179,12 @@ def main(tasks, machines, times, iseed, fileName):
         # first random solution
         oldBest = randomNeighboor(nbtasks, seed)
         oldBestValue = calcMakespan(oldBest, processingTimes, nbtasks, nbmachines)
+        f.write("First solution:\n"+str(oldBest)+"\nFirst solution value:\n"+str(oldBestValue))
         # remember to update the best one so far
         bestSol = oldBest
         bestSolValue = oldBestValue
 
-        f.write("Execution: "+str(r) + " Seed: "+str(seed))
+        f.write("\nExecution: "+str(r) + " Seed: "+str(seed))
         startTime = time.time()
 
         ite = 0
@@ -193,7 +195,7 @@ def main(tasks, machines, times, iseed, fileName):
                 temp = 0
 
             # creates a new neighboor and checks its makespan
-            newBest = newNeighboorRandIter(oldBest, ite)
+            newBest = newNeighboorRandTasks(oldBest)
             newBestValue = calcMakespan(newBest, processingTimes, nbtasks, nbmachines)
 
             # checks if it is the best solution so far
@@ -218,9 +220,13 @@ def main(tasks, machines, times, iseed, fileName):
                     oldBest = newBest
                     oldBestValue = newBestValue
 
+        # Calculando a soma pra depois calcular a média
+        soma += bestSolValue
         f.write("\nFinal solution and makespan:")
         f.write("\n"+str(bestSol)+"\n"+str(bestSolValue))
         endTime = time.time() - startTime
         f.write("\nExecution time: "+str(endTime) + "\n\n")
 
+    media = soma/10
+    f.write("\nMean makespan: "+str(media))
     f.close()
