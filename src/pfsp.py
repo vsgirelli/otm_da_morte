@@ -137,7 +137,7 @@ def main(tasks, machines, times, iseed, fileName):
         f = open(outFile, "w+")
     else:
         # repetitions needed for the 10 different seeds
-        rep = 5
+        rep = 10
         outFile = os.path.join(outDir, fileName + "_" + str(rep))
         f = open(outFile, "w+")
 
@@ -160,7 +160,7 @@ def main(tasks, machines, times, iseed, fileName):
     #saIter = nbtasks
     # For randomic generation of neighboors:
     # the inital value was 100, and then 5k. 50k is the best value we found.
-    saIter = 10000
+    saIter = 50000
     # intial temperature
     initTemp = 100.0
     # this can't be zero because there are some divisions for tempFinal
