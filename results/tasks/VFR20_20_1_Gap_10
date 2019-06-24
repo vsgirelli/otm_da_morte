@@ -1,0 +1,102 @@
+First solution:
+[12, 13, 1, 8, 15, 6, 19, 4, 7, 5, 9, 3, 2, 11, 17, 0, 14, 16, 18, 10]
+First solution value:
+2836
+Execution: 0 Seed: 0
+Final solution and makespan:
+[15, 11, 12, 8, 13, 18, 10, 7, 3, 16, 14, 4, 6, 2, 17, 0, 19, 9, 1, 5]
+2460
+Execution time: 7.732485055923462
+
+First solution:
+[4, 18, 2, 8, 3, 7, 12, 14, 13, 10, 6, 15, 1, 16, 0, 9, 19, 17, 5, 11]
+First solution value:
+2681
+Execution: 1 Seed: 1
+Final solution and makespan:
+[17, 14, 10, 15, 19, 12, 16, 11, 4, 6, 3, 2, 5, 18, 9, 0, 8, 7, 1, 13]
+2471
+Execution time: 6.939671516418457
+
+First solution:
+[1, 2, 18, 11, 5, 16, 12, 10, 4, 14, 9, 3, 0, 13, 15, 19, 8, 17, 6, 7]
+First solution value:
+2772
+Execution: 2 Seed: 2
+Final solution and makespan:
+[9, 0, 15, 3, 13, 7, 5, 2, 18, 12, 11, 17, 1, 16, 14, 6, 8, 4, 10, 19]
+2448
+Execution time: 7.514221668243408
+
+First solution:
+[7, 18, 17, 4, 11, 14, 9, 19, 10, 13, 1, 0, 12, 2, 16, 15, 5, 6, 3, 8]
+First solution value:
+2676
+Execution: 3 Seed: 3
+Final solution and makespan:
+[7, 5, 16, 2, 18, 9, 4, 13, 1, 17, 19, 0, 14, 15, 12, 3, 10, 8, 11, 6]
+2462
+Execution time: 7.527729034423828
+
+First solution:
+[7, 9, 3, 12, 15, 2, 1, 13, 0, 6, 8, 4, 11, 16, 18, 5, 14, 10, 19, 17]
+First solution value:
+2693
+Execution: 4 Seed: 4
+Final solution and makespan:
+[8, 2, 14, 9, 5, 11, 13, 17, 18, 19, 1, 3, 7, 10, 0, 16, 15, 4, 6, 12]
+2456
+Execution time: 7.536766767501831
+
+First solution:
+[19, 8, 11, 16, 0, 13, 7, 12, 3, 10, 15, 2, 1, 18, 17, 14, 5, 6, 9, 4]
+First solution value:
+2743
+Execution: 5 Seed: 5
+Final solution and makespan:
+[8, 13, 6, 15, 5, 19, 18, 2, 7, 14, 3, 17, 12, 16, 9, 10, 1, 11, 0, 4]
+2471
+Execution time: 8.849722146987915
+
+First solution:
+[18, 2, 15, 8, 1, 0, 19, 10, 9, 7, 5, 11, 14, 13, 3, 17, 16, 6, 12, 4]
+First solution value:
+2560
+Execution: 6 Seed: 6
+Final solution and makespan:
+[13, 9, 15, 0, 7, 1, 11, 12, 8, 19, 2, 6, 14, 17, 16, 10, 5, 18, 3, 4]
+2448
+Execution time: 9.27922010421753
+
+First solution:
+[10, 4, 12, 1, 2, 13, 8, 16, 5, 9, 0, 14, 3, 19, 6, 7, 18, 11, 15, 17]
+First solution value:
+2816
+Execution: 7 Seed: 7
+Final solution and makespan:
+[19, 3, 11, 12, 14, 0, 17, 16, 9, 18, 15, 10, 8, 1, 2, 4, 6, 13, 7, 5]
+2447
+Execution time: 15.972757577896118
+
+First solution:
+[7, 11, 12, 4, 6, 18, 0, 1, 2, 3, 8, 10, 15, 5, 13, 9, 16, 17, 14, 19]
+First solution value:
+2732
+Execution: 8 Seed: 8
+Final solution and makespan:
+[10, 6, 0, 17, 1, 12, 2, 14, 18, 16, 11, 7, 4, 8, 3, 13, 9, 5, 19, 15]
+2464
+Execution time: 18.816500902175903
+
+First solution:
+[14, 11, 8, 4, 5, 13, 10, 0, 15, 17, 7, 1, 18, 16, 6, 12, 3, 9, 19, 2]
+First solution value:
+2865
+Execution: 9 Seed: 9
+Final solution and makespan:
+[4, 7, 10, 6, 5, 13, 15, 8, 17, 19, 14, 16, 12, 2, 11, 0, 1, 18, 3, 9]
+2464
+Execution time: 16.554858446121216
+
+
+Mean makespan: 2459.1

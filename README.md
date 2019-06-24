@@ -8,7 +8,7 @@ Valéria Soldera Girelli
 
 
 Este trabalho busca resolver o Permutational Flowshop Scheduling Problem utilizando
-Simulate Annealing como meta-heurística.
+Simulated Annealing como meta-heurística.
 
 O código está escrito na linguagem Python3.
 
