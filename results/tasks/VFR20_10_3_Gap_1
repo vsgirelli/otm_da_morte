@@ -1,0 +1,12 @@
+First solution:
+[12, 13, 1, 8, 15, 6, 19, 4, 7, 5, 9, 3, 2, 11, 17, 0, 14, 16, 18, 10]
+First solution value:
+1895
+Execution: 0 Seed: 0
+Final solution and makespan:
+[15, 3, 7, 18, 0, 6, 1, 19, 4, 2, 13, 9, 11, 16, 17, 5, 8, 10, 14, 12]
+1747
+Execution time: 4.792470693588257
+
+
+Mean makespan: 174.7
